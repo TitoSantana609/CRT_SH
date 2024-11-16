@@ -3,11 +3,12 @@ from bs4 import BeautifulSoup
 import re
 
 
-def get_soup(search_domain):
-    """ Takes a search domain, sends a request to crt.sh and returns the raw html """
+def fetch_crt_sh_html(search_domain):
+    """Fetches the HTML from crt.sh for the given search domain"""
 
-    page = requests.get(f"https://crt.sh/?q=.{search_domain}")  # Include leading dot for subdomain search
-    soup = BeautifulSoup(page.content, "html.parser")
+    url = f"https://crt.sh/?q=.{search_domain}"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
     return soup
 
 
@@ -55,7 +56,7 @@ def main():
     file_name = input("Enter the desired filename for the extracted hosts (e.g., scraped_hosts.txt): ")
 
     domain = input("Enter the domain to search: ")
-    soup = get_soup(domain)
+    soup = fetch_crt_sh_html(domain)
     hosts = extract_hosts(soup)
     for i in hosts:
         write_to_file(i, file_name)
